@@ -34,3 +34,15 @@ def close_mongo_connection():
 
 def get_database():
     return db
+
+
+def get_users_collection():
+    return db["users"]
+
+
+def get_complaints_collection():
+    return db["complaints"]
+
+
+def get_notices_collection():
+    return db["notices"]
