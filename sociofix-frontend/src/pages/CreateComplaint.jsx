@@ -1,5 +1,6 @@
 import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { ArrowLeft } from 'lucide-react'
 import { createComplaint } from '../api/complaints'
@@ -9,24 +10,55 @@ const CATEGORIES = ['Plumbing', 'Electrical', 'Cleaning', 'Security', 'Elevator'
 const PRIORITIES = ['low', 'medium', 'high', 'urgent']
 
 export default function CreateComplaint() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [preview, setPreview] = useState(null);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
-    defaultValues: { title: '', category: 'Plumbing', priority: 'medium', block: '', description: '' },
+    defaultValues: {
+      title: '',
+      category: 'Plumbing',
+      priority: 'medium',
+      block: '',
+      flat_number: '',
+      description: '',
+      image: null,
+    },
   })
 
   const onSubmit = async (data) => {
     try {
-      await createComplaint(data)
-      toast.success('Complaint filed successfully')
-      navigate('/complaints')
+      const formData = new FormData();
+
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("category", data.category);
+      formData.append("block", data.block);
+      formData.append("flat_number", data.flat_number);
+
+      if (data.image?.[0]) {
+        formData.append("image", data.image[0]);
+      }
+
+      const res = await createComplaint(formData);
+
+      console.log(res);
+
+      toast.success("Complaint filed successfully");
+
+      navigate("/complaints");
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Failed to file complaint.')
+      console.error(err);
+
+      toast.error(
+        err.response?.data?.detail ||
+        err.message ||
+        "Failed to file complaint."
+      );
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
@@ -96,6 +128,42 @@ export default function CreateComplaint() {
               {...register('block')}
             />
           </div>
+
+          <div>
+            <label className="label">Flat Number</label>
+
+            <input
+              className="input"
+              {...register('flat_number')}
+              placeholder="101"
+            />
+          </div>
+
+          <div>
+           <label className="label">Complaint Image</label>
+
+           <input
+            type="file"
+            accept="image/*"
+            className="input"
+            {...register('image')}
+            onChange={(e) => {
+              register('image').onChange(e)
+
+              if (e.target.files[0]) {
+                setPreview(URL.createObjectURL(e.target.files[0]))
+      }
+    }}
+  />
+
+  {preview && (
+    <img
+      src={preview}
+      alt="Preview"
+      className="mt-3 h-40 rounded-lg border object-cover"
+    />
+  )}
+</div>
 
           <div>
             <label className="label" htmlFor="description">

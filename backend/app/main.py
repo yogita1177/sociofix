@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.core.logger import logger
@@ -39,6 +40,12 @@ app.include_router(auth_router)
 app.include_router(complaint_router)
 app.include_router(notices_router)
 app.include_router(dashboard_router)
+
+app.mount(
+    "/uploads",
+    StaticFiles(directory="uploads"),
+    name="uploads",
+)
 
 @app.get("/")
 async def root():

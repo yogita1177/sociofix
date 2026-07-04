@@ -245,11 +245,26 @@ export default function ComplaintList() {
               return (
                 <li key={id} className="grid grid-cols-1 gap-3 px-5 py-4 sm:grid-cols-12 sm:items-center">
                   <div className="sm:col-span-4">
-                    <Link to={`/complaints/${id}`} className="font-medium text-slate-800 hover:text-primary-600">
+                    {c.images?.length > 0 && (
+                      <img
+                        src={`http://localhost:8000${c.images[0]}`}
+                        alt={c.title}
+                        className="mb-3 h-24 w-full rounded-lg border object-cover"
+                      />
+                    )}
+
+                      <Link
+                        to={`/complaints/${id}`}
+                        className="font-medium text-slate-800 hover:text-primary-600"
+                      >
                       {c.title}
                     </Link>
-                    <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">{c.description}</p>
+
+                    <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">
+                      {c.description}
+                    </p>
                   </div>
+                  
                   <div className="text-sm text-slate-600 sm:col-span-2">{c.category || '—'}</div>
                   <div className="sm:col-span-2">
                     <PriorityBadge priority={c.priority} />

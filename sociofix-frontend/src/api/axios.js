@@ -26,14 +26,15 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('sociofix_token')
-      localStorage.removeItem('sociofix_user')
-      if (!window.location.pathname.startsWith('/login')) {
-        window.location.href = '/login'
+      localStorage.removeItem("sociofix_token");
+      localStorage.removeItem("sociofix_user");
+
+      if (!window.location.pathname.startsWith("/login")) {
+        window.location.href = "/login";
       }
     }
-    return Promise.reject(error)
-  }
-)
 
+    return Promise.reject(error);
+  }
+);
 export default api

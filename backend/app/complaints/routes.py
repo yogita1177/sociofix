@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 
 from app.auth.dependencies import get_current_user
 from app.complaints.schemas import (
@@ -21,12 +21,22 @@ router = APIRouter(
 # -----------------------------
 
 @router.post("/")
-def create_complaint(
-    data: ComplaintCreate,
+async def create_complaint(
+    title: str = Form(...),
+    description: str = Form(...),
+    category: str = Form(...),
+    block: str = Form(...),
+    flat_number: str = Form(...),
+    image: UploadFile | None = File(None),
     current_user=Depends(get_current_user),
 ):
-    complaint = ComplaintService.create_complaint(
-        data,
+    complaint = await ComplaintService.create_complaint(
+        title,
+        description,
+        category,
+        block,
+        flat_number,
+        image,
         current_user,
     )
 
@@ -34,7 +44,6 @@ def create_complaint(
         message="Complaint Created Successfully",
         data=complaint,
     )
-
 
 @router.get("/my")
 def get_my_complaints(

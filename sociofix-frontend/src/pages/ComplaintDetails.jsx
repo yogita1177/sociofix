@@ -147,6 +147,16 @@ export default function ComplaintDetails() {
           {complaint.description}
         </p>
 
+        {complaint.images?.length > 0 && (
+          <div className="mt-5">
+            <img
+              src={`http://localhost:8000${complaint.images[0]}`}
+              alt="Complaint"
+              className="w-full max-h-96 object-cover rounded-xl border"
+            />
+          </div>
+        )}
+
         <div className="mt-6 grid grid-cols-1 gap-4 border-t border-slate-100 pt-6 sm:grid-cols-3">
           <div className="flex items-center gap-2.5 text-sm text-slate-600">
             <Tag size={16} className="text-slate-400" />

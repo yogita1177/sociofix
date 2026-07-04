@@ -1,6 +1,11 @@
 import api from './axios'
 
-export const createComplaint = (payload) => api.post('/complaints', payload)
+export const createComplaint = (formData) =>
+  api.post('/complaints', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
 
 // Admin/society-wide view with optional filters: status, priority, category, block, date, search
 export const getAllComplaints = (params = {}) => {

@@ -93,7 +93,7 @@ function NoticeFormModal({ open, initialValues, onClose, onSaved }) {
             <input
               type="checkbox"
               className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
-              {...register('pinned')}
+              {...register('is_pinned')}
             />
             Pin this notice to the top
           </label>

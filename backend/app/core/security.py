@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from typing import Any
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -19,8 +20,10 @@ def verify_password(password: str, hashed_password: str) -> bool:
     return pwd_context.verify(password, hashed_password)
 
 
-def create_access_token(subject: str, extra_claims: dict | None = None):
-
+def create_access_token(
+    subject: str,
+    extra_claims: dict[str, Any] | None = None,
+):
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES
     )
@@ -28,6 +31,7 @@ def create_access_token(subject: str, extra_claims: dict | None = None):
     payload = {
         "sub": subject,
         "exp": expire,
+        "type": "access",
     }
 
     if extra_claims:
@@ -41,14 +45,12 @@ def create_access_token(subject: str, extra_claims: dict | None = None):
 
 
 def decode_token(token: str):
-
     try:
-
-        return jwt.decode(
+        payload = jwt.decode(
             token,
             settings.JWT_SECRET_KEY,
             algorithms=[settings.JWT_ALGORITHM],
         )
-
+        return payload
     except JWTError:
-        raise Exception("Invalid Token")
+        return None

@@ -1,6 +1,5 @@
-from pydantic import BaseModel
 from typing import Optional
-
+from pydantic import BaseModel
 
 class NoticeCreate(BaseModel):
     title: str
@@ -11,3 +10,4 @@ class NoticeCreate(BaseModel):
 class NoticeUpdate(BaseModel):
     title: Optional[str] = None
     content: Optional[str] = None
+    is_pinned: Optional[bool] = None

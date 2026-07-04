@@ -36,11 +36,12 @@ class NoticeService:
             "notice_id": f"NOT-{int(datetime.utcnow().timestamp())}",
             "title": data.title,
             "content": data.content,
+            "is_pinned": data.is_pinned,
             "created_by": current_user["name"],
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow(),
         }
-
+        
         result = notices.insert_one(notice)
 
         notice["_id"] = result.inserted_id

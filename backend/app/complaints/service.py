@@ -1,9 +1,16 @@
+import os
+import uuid
+from bson import ObjectId
+from fastapi import UploadFile
+
 from datetime import datetime, timedelta
 
 from fastapi import HTTPException
 
 from app.database.mongodb import get_complaints_collection
+from app.core.config import settings
 
+from app.utils.email import send_email
 
 class ComplaintService:
 
@@ -59,42 +66,83 @@ class ComplaintService:
     }
 
     @staticmethod
-    def create_complaint(data, current_user):
+    async def create_complaint(
+        title,
+        description,
+        category,
+        block,
+        flat_number,
+        image: UploadFile | None,
+        current_user,
+    ):
 
         complaints = get_complaints_collection()
 
+        image_paths = []
+
+        if image:
+            os.makedirs("uploads", exist_ok=True)
+
+            ext = image.filename.split(".")[-1]
+            filename = f"{uuid.uuid4()}.{ext}"
+
+            filepath = os.path.join("uploads", filename)
+
+            with open(filepath, "wb") as buffer:
+                buffer.write(await image.read())
+
+            image_paths.append(f"/uploads/{filename}")
+
         complaint = {
             "complaint_id": f"CMP-{int(datetime.utcnow().timestamp())}",
-            "title": data.title,
-            "description": data.description,
-            "category": data.category,
+            "title": title,
+            "description": description,
+            "category": category,
             "priority": "Medium",
             "status": "Pending",
             "resident_id": current_user["_id"],
             "resident_name": current_user["name"],
-            "block": data.block,
-            "flat_number": data.flat_number,
+            "resident_email": current_user["email"],
+            "block": block,
+            "flat_number": flat_number,
             "assigned_to": None,
-            "images": [],
+            "images": image_paths,
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow(),
             "resolved_at": None,
-
-    # NEW
-        "history": [
-        {
-            "status": "Pending",
-            "actor": current_user["name"],
-            "note": "Complaint Created",
-            "timestamp": datetime.utcnow(),
+            "history": [
+                {
+                    "status": "Pending",
+                    "actor": current_user["name"],
+                    "note": "Complaint Created",
+                    "timestamp": datetime.utcnow(),
+                }
+            ],
         }
-    ],
-}
+
         result = complaints.insert_one(complaint)
         complaint["_id"] = result.inserted_id
 
-        return ComplaintService.serialize_complaint(complaint)
+        send_email(
+            current_user["email"],
+            "Complaint Registered - SocioFix",
+            f"""
+        Hello {current_user["name"]},
 
+        Your complaint has been registered successfully.
+
+        Complaint ID: {complaint["complaint_id"]}
+        Title: {complaint["title"]}
+        Status: {complaint["status"]}
+
+        Thank you,
+        SocioFix
+        """
+        )
+
+        return ComplaintService.serialize_complaint(complaint)
+    
+    
     @staticmethod
     def get_my_complaints(current_user):
 
@@ -185,29 +233,24 @@ class ComplaintService:
         
     @staticmethod
     def get_overdue_complaints():
-
         complaints = get_complaints_collection()
 
-        seven_days_ago = datetime.utcnow() - timedelta(days=7)
+        overdue_days = getattr(settings, "OVERDUE_COMPLAINT_DAYS", 7)
+        cutoff = datetime.utcnow() - timedelta(days=overdue_days)
 
         data = list(
             complaints.find(
-            {
-                "status": {
-                    "$ne": "Resolved"
-                },
-                "created_at": {
-                    "$lt": seven_days_ago
-                },
-            }
+                {
+                    "status": {"$ne": "Resolved"},
+                    "created_at": {"$lt": cutoff},
+                }
+            ).sort("created_at", -1)
         )
-    )
 
         return [
             ComplaintService.serialize_complaint(item)
             for item in data
-    ]
-        
+        ]
 
 
     @staticmethod
@@ -215,16 +258,14 @@ class ComplaintService:
 
         complaints = get_complaints_collection()
 
-        complaint = complaints.find_one(
-            {
-                "complaint_id": complaint_id
-            }
-        )
+        complaint = complaints.find_one({
+            "complaint_id": complaint_id
+        })
 
         if complaint is None:
             return None
 
-        return ComplaintService.serialize_complaint(complaint)
+        return ComplaintService.serialize_complaint(complaint)    
 
     @staticmethod
     def update_complaint(
@@ -236,10 +277,10 @@ class ComplaintService:
         complaints = get_complaints_collection()
 
         complaint = complaints.find_one(
-            {
-                "complaint_id": complaint_id
-            }
-        )
+        {
+            "complaint_id": complaint_id
+        }
+    )
 
         if complaint is None:
             raise HTTPException(
@@ -313,10 +354,10 @@ class ComplaintService:
             )
 
         complaints.delete_one(
-            {
-                "complaint_id": complaint_id
-            }
-        )
+        {
+            "complaint_id": complaint_id
+        }
+    )
 
         return True
 
@@ -374,9 +415,31 @@ class ComplaintService:
 
         complaint.update(update)
 
+        resident_email = complaint.get("resident_email")
+
+        if resident_email:
+            send_email(
+                resident_email,
+                "Complaint Status Updated - SocioFix",
+                f"""
+        Hello {complaint["resident_name"]},
+
+        Your complaint status has been updated.
+
+        Complaint:
+        {complaint["title"]}
+
+        New Status:
+        {data.status}
+
+        Regards,
+        SocioFix
+        """
+            )
+
         return ComplaintService.serialize_complaint(
             complaint
-    )
+        )
     
     @staticmethod
     def update_priority(
@@ -395,8 +458,8 @@ class ComplaintService:
         complaint = complaints.find_one(
             {
                 "complaint_id": complaint_id
-        }
-    )
+            }
+        )
 
         if complaint is None:
             raise ValueError("Complaint not found")

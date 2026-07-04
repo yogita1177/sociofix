@@ -20,5 +20,14 @@ class Settings(BaseSettings):
 
     CORS_ORIGINS: str = "http://localhost:5173"
 
+    # -----------------------------
+    # Email Configuration
+    # -----------------------------
+    SMTP_HOST: str
+    SMTP_PORT: int = 587
+    SMTP_USER: str
+    SMTP_PASSWORD: str
+    EMAIL_FROM: str
+
 
 settings = Settings()
