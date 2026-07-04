@@ -70,11 +70,10 @@ export default function ComplaintList() {
       const matchesCategory = filters.category === 'all' || c.category === filters.category
       const matchesBlock = !filters.block || (c.block || '').toLowerCase().includes(filters.block.toLowerCase())
       const matchesDate = !filters.date || (c.created_at || c.date || '').slice(0, 10) === filters.date
-      const matchesSearch =
-        const matchesSearch =
-    !filters.search ||
-    c.title?.toLowerCase().includes(filters.search.toLowerCase()) ||
-    c.category?.toLowerCase().includes(filters.search.toLowerCase())
+      const matchesSearch =!filters.search ||
+        c.title?.toLowerCase().includes(filters.search.toLowerCase()) ||
+        c.category?.toLowerCase().includes(filters.search.toLowerCase()) ||
+        c.description?.toLowerCase().includes(filters.search.toLowerCase())
       return matchesStatus && matchesPriority && matchesCategory && matchesBlock && matchesDate && matchesSearch
     })
   }, [admin, complaints, filters])
