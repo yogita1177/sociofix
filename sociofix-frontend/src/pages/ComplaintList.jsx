@@ -71,9 +71,10 @@ export default function ComplaintList() {
       const matchesBlock = !filters.block || (c.block || '').toLowerCase().includes(filters.block.toLowerCase())
       const matchesDate = !filters.date || (c.created_at || c.date || '').slice(0, 10) === filters.date
       const matchesSearch =
-        !filters.search ||
-        complaint.title?.toLowerCase().includes(filters.search.toLowerCase()) ||
-        c.category?.toLowerCase().includes(filters.search.toLowerCase())
+        const matchesSearch =
+    !filters.search ||
+    c.title?.toLowerCase().includes(filters.search.toLowerCase()) ||
+    c.category?.toLowerCase().includes(filters.search.toLowerCase())
       return matchesStatus && matchesPriority && matchesCategory && matchesBlock && matchesDate && matchesSearch
     })
   }, [admin, complaints, filters])
@@ -250,7 +251,7 @@ export default function ComplaintList() {
                     {c.images?.length > 0 && (
                       <img
                         src={`${import.meta.env.VITE_API_BASE_URL}${c.images[0]}`}
-                        alt={complaint.title}
+                        alt={c.title}
                         className="mb-3 h-24 w-full rounded-lg border object-cover"
                       />
                     )}
@@ -259,7 +260,7 @@ export default function ComplaintList() {
                         to={`/complaints/${id}`}
                         className="font-medium text-slate-800 hover:text-primary-600"
                       >
-                      {complaint.title}
+                      {c.title}
                     </Link>
 
                     <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">

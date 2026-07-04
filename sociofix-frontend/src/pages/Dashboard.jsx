@@ -48,20 +48,27 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    let active = true;
+
     getDashboardStats()
       .then((res) => {
-        if (active) setStats(res.data.data)
+        if (active) {
+          setStats(res.data.data);
+        }
       })
       .catch((err) => {
-        toast.error(err.response?.data?.detail || 'Could not load dashboard data.')
+        toast.error(err.response?.data?.detail || "Could not load dashboard data.");
       })
       .finally(() => {
-        if (active) setIsLoading(false)
-      })
+        if (active) {
+          setIsLoading(false);
+        }
+      });
+
     return () => {
-      active = false
-    }
-  }, [])
+      active = false;
+    };
+  }, []);
 
   if (isLoading) {
     return (
