@@ -48,7 +48,6 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    let active = true
     getDashboardStats()
       .then((res) => {
         if (active) setStats(res.data.data)

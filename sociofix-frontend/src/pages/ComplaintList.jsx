@@ -72,7 +72,7 @@ export default function ComplaintList() {
       const matchesDate = !filters.date || (c.created_at || c.date || '').slice(0, 10) === filters.date
       const matchesSearch =
         !filters.search ||
-        c.title?.toLowerCase().includes(filters.search.toLowerCase()) ||
+        complaint.title?.toLowerCase().includes(filters.search.toLowerCase()) ||
         c.category?.toLowerCase().includes(filters.search.toLowerCase())
       return matchesStatus && matchesPriority && matchesCategory && matchesBlock && matchesDate && matchesSearch
     })
@@ -82,9 +82,11 @@ export default function ComplaintList() {
     if (!deleteTarget) return
     setIsDeleting(true)
     try {
-      await deleteComplaint(deleteTarget.id || deleteTarget._id)
+      await deleteComplaint(deleteTarget.complaint_id)
       toast.success('Complaint deleted')
-      setComplaints((prev) => prev.filter((c) => (c.id || c._id) !== (deleteTarget.id || deleteTarget._id)))
+      setComplaints((prev) =>
+        prev.filter((c) => c.complaint_id !== deleteTarget.complaint_id)
+    )
       setDeleteTarget(null)
     } catch (err) {
       toast.error(err.response?.data?.detail || 'Failed to delete complaint.')
@@ -241,14 +243,14 @@ export default function ComplaintList() {
           </div>
           <ul className="divide-y divide-slate-100">
             {displayedComplaints.map((c) => {
-              const id = c.id || c._id
+              const id = c.complaint_id
               return (
                 <li key={id} className="grid grid-cols-1 gap-3 px-5 py-4 sm:grid-cols-12 sm:items-center">
                   <div className="sm:col-span-4">
                     {c.images?.length > 0 && (
                       <img
-                        src={`http://localhost:8000${c.images[0]}`}
-                        alt={c.title}
+                        src={`${import.meta.env.VITE_API_BASE_URL}${c.images[0]}`}
+                        alt={complaint.title}
                         className="mb-3 h-24 w-full rounded-lg border object-cover"
                       />
                     )}
@@ -257,7 +259,7 @@ export default function ComplaintList() {
                         to={`/complaints/${id}`}
                         className="font-medium text-slate-800 hover:text-primary-600"
                       >
-                      {c.title}
+                      {complaint.title}
                     </Link>
 
                     <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">

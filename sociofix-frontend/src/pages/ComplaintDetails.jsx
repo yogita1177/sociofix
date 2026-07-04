@@ -84,7 +84,14 @@ export default function ComplaintDetails() {
     setStatusUpdating(true)
     try {
       const res = await updateComplaintStatus(complaintId, newStatus)
-      setComplaint(res.data.data?.id ? res.data.data : { ...complaint, status: newStatus })
+      setComplaint(
+        res.data.data?.complaint_id
+            ? res.data.data
+            : {
+                  ...complaint,
+                  status: newStatus,
+              }
+    )
       toast.success('Status updated')
       fetchComplaint()
     } catch (err) {
@@ -99,7 +106,7 @@ export default function ComplaintDetails() {
     setPriorityUpdating(true)
     try {
       const res = await updateComplaintPriority(complaintId, newPriority)
-      setComplaint(res.data.data?.id ? res.data.data : { ...complaint, priority: newPriority })
+      setComplaint(res.data.data?.complaint_id ? res.data.data : { ...complaint, priority: newPriority })
       toast.success('Priority updated')
       fetchComplaint()
     } catch (err) {
@@ -112,7 +119,7 @@ export default function ComplaintDetails() {
   if (isLoading) return <FullPageSpinner label="Loading complaint…" />
   if (!complaint) return null
 
-  const id = complaint.id || complaint._id
+  const id = complaint.complaint_id
   const history = complaint.history || []
 
   return (
@@ -150,10 +157,10 @@ export default function ComplaintDetails() {
         {complaint.images?.length > 0 && (
           <div className="mt-5">
             <img
-              src={`http://localhost:8000${complaint.images[0]}`}
-              alt="Complaint"
-              className="w-full max-h-96 object-cover rounded-xl border"
-            />
+                src={`${import.meta.env.VITE_API_BASE_URL}${complaint.images[0]}`}
+                alt={complaint.title}
+                className="mb-3 h-24 w-full rounded-lg border object-cover"
+              />
           </div>
         )}
 
