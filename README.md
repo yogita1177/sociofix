@@ -1,245 +1,374 @@
-# 🏢 SocioFix Backend
+# 🏢 SocioFix – Society Maintenance Management System
 
-SocioFix is a Society Management System backend built using **FastAPI** and **MongoDB**. It provides secure authentication, complaint management, notice management, and dashboard analytics for residents and administrators.
+SocioFix is a full-stack web application that streamlines complaint management and society maintenance operations. It enables residents to raise maintenance complaints while allowing administrators to efficiently track, manage, prioritize, and resolve issues through a centralized dashboard.
 
 ---
 
-# 🚀 Features
+## 📌 Features
 
-## 🔐 Authentication
-- User Registration
-- User Login
-- JWT Authentication
-- Password Hashing (bcrypt)
-- Current User Profile (/me)
+### 👤 Authentication
+- Secure JWT-based authentication
+- User Registration & Login
+- Role-based authorization (Resident/Admin)
+- Protected routes
+- Persistent user sessions
 
-## 📝 Complaint Management
-- Create Complaint
-- View My Complaints
-- View Complaint Details
-- Update Complaint
-- Delete Complaint
-- Update Complaint Status (Admin Only)
+### 🛠 Complaint Management
+- Create maintenance complaints
+- Upload complaint images
+- View complaint details
+- Edit complaints
+- Delete complaints
+- Complaint status tracking
+- Priority management
+- Complaint history
+- Search complaints
+- Filter complaints by:
+  - Status
+  - Category
+  - Priority
+  - Block
+  - Date
 
-## 📢 Notice Management
-- Create Notice (Admin Only)
-- View All Notices
-- View Notice Details
-- Update Notice (Admin Only)
-- Delete Notice (Admin Only)
+### 📢 Notice Board
+- Create notices
+- Edit notices
+- Delete notices
+- Pin/Unpin important notices
+- View latest announcements
 
-## 📊 Dashboard
-- Total Complaints
-- Pending Complaints
-- In Progress Complaints
-- Resolved Complaints
-- Total Notices
+### 📊 Dashboard
+- Total complaints
+- Pending complaints
+- In Progress complaints
+- Resolved complaints
+- High priority complaints
+- Overdue complaints
+- Complaint category statistics
+- Recent complaints
+- Latest notices
 
-## 🔒 Security
-- JWT Authentication
-- Role-Based Authorization
-- Password Encryption using bcrypt
+### 👤 User Profile
+- View profile
+- Update profile information
 
 ---
 
 # 🛠 Tech Stack
 
-- Python 3.12
+## Frontend
+
+- React.js
+- Vite
+- Tailwind CSS
+- React Router DOM
+- Axios
+- React Hot Toast
+- Lucide React Icons
+
+---
+
+## Backend
+
 - FastAPI
-- MongoDB Atlas
-- PyMongo
-- Passlib (bcrypt)
-- Python-JOSE (JWT)
+- Python
+- JWT Authentication
 - Pydantic
 - Uvicorn
+
+---
+
+## Database
+
+- MongoDB
+
+---
+
+## Deployment
+
+Frontend:
+- Vercel
+
+Backend:
+- Render
 
 ---
 
 # 📂 Project Structure
 
 ```
-backend/
+SocioFix
 │
-├── app/
-│   ├── auth/
-│   ├── complaints/
-│   ├── notices/
-│   ├── dashboard/
-│   ├── core/
-│   ├── database/
-│   ├── utils/
-│   ├── uploads/
+├── backend
+│   ├── app
+│   │
+│   ├── auth
+│   ├── complaints
+│   ├── dashboard
+│   ├── notices
+│   ├── profile
+│   ├── database
+│   ├── core
 │   └── main.py
 │
-├── requirements.txt
-├── .env.example
-├── .gitignore
-└── README.md
+└── sociofix-frontend
+    ├── public
+    ├── src
+    │
+    ├── api
+    ├── components
+    ├── context
+    ├── pages
+    ├── utils
+    └── App.jsx
 ```
 
 ---
 
-# ⚙️ Installation
+# 🚀 Live Demo
+
+### Frontend
+
+https://sociofix.vercel.app
+
+### Backend API
+
+https://sociofix-zwxz.onrender.com
+
+### API Documentation (Swagger)
+
+https://sociofix-zwxz.onrender.com/docs
+
+---
+
+# ⚙ Installation
 
 ## Clone Repository
 
 ```bash
-git clone <repository-url>
-cd backend
+git clone https://github.com/yogita1177/sociofix.git
 ```
 
-## Create Virtual Environment
-
-Windows
-
 ```bash
-python -m venv venv
-venv\Scripts\activate
-```
-
-Linux / macOS
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
+cd sociofix
 ```
 
 ---
 
-## Install Dependencies
+## Backend Setup
+
+```bash
+cd backend
+```
+
+Create virtual environment
+
+```bash
+python -m venv venv
+```
+
+Activate
+
+Windows
+
+```bash
+venv\Scripts\activate
+```
+
+Linux/Mac
+
+```bash
+source venv/bin/activate
+```
+
+Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
-
-# 🔑 Environment Variables
-
-Create a `.env` file in the backend directory.
-
-Example:
+Create a `.env` file
 
 ```env
-MONGO_URI=your_mongodb_connection_string
-DATABASE_NAME=sociofix
-JWT_SECRET=your_secret_key
-JWT_ALGORITHM=HS256
+APP_NAME=SocioFix
+
+SECRET_KEY=your_secret_key
+
 ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+MONGODB_URL=your_mongodb_connection_string
+
+DATABASE_NAME=sociofix
+
+CORS_ORIGINS=http://localhost:5173,https://sociofix.vercel.app
 ```
 
----
-
-# ▶️ Running the Server
+Run backend
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-Server will start at:
+---
 
-```
-http://127.0.0.1:8000
+## Frontend Setup
+
+```bash
+cd sociofix-frontend
 ```
 
-Swagger Documentation:
+Install packages
 
+```bash
+npm install
 ```
-http://127.0.0.1:8000/docs
+
+Create `.env`
+
+```env
+VITE_API_BASE_URL=http://localhost:8000/api
+```
+
+For production
+
+```env
+VITE_API_BASE_URL=https://sociofix-zwxz.onrender.com/api
+```
+
+Run frontend
+
+```bash
+npm run dev
 ```
 
 ---
 
-# 📚 API Modules
+# 🔐 User Roles
+
+## Resident
+
+- Register/Login
+- File complaints
+- Edit own complaints
+- Delete own complaints
+- Track complaint status
+- View notices
+- Update profile
+
+---
+
+## Admin
+
+- View all complaints
+- Manage complaint priority
+- Update complaint status
+- Delete complaints
+- Manage notices
+- View analytics dashboard
+
+---
+
+## 📷 Screenshots
+
+### Login
+
+![Login](screenshots/login.png)
+
+### Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+### Complaints
+
+![Complaints](screenshots/complaints.png)
+
+### Complaint Details
+
+![Complaint Details](screenshots/complaint-details.png)
+
+### Notice Board
+
+![Notice Board](screenshots/notice-board.png)
+
+### Profile
+
+![Profile](screenshots/profile.png)
+---
+
+# 🔄 API Endpoints
 
 ## Authentication
 
-| Method | Endpoint |
-|----------|--------------------------|
-| POST | /api/auth/register |
-| POST | /api/auth/login |
-| GET | /api/auth/me |
+```
+POST   /api/auth/register
+POST   /api/auth/login
+GET    /api/auth/me
+```
 
 ---
 
 ## Complaints
 
-| Method | Endpoint |
-|----------|--------------------------------|
-| POST | /api/complaints/ |
-| GET | /api/complaints/my |
-| GET | /api/complaints/{complaint_id} |
-| PUT | /api/complaints/{complaint_id} |
-| DELETE | /api/complaints/{complaint_id} |
-| PATCH | /api/complaints/{complaint_id}/status |
-
----
-
-## Notices
-
-| Method | Endpoint |
-|----------|--------------------------|
-| GET | /api/notices/ |
-| POST | /api/notices/ |
-| GET | /api/notices/{notice_id} |
-| PUT | /api/notices/{notice_id} |
-| DELETE | /api/notices/{notice_id} |
+```
+GET     /api/complaints
+GET     /api/complaints/my
+GET     /api/complaints/{id}
+POST    /api/complaints
+PUT     /api/complaints/{id}
+DELETE  /api/complaints/{id}
+PATCH   /api/complaints/{id}/status
+PATCH   /api/complaints/{id}/priority
+```
 
 ---
 
 ## Dashboard
 
-| Method | Endpoint |
-|----------|-------------------|
-| GET | /api/dashboard/ |
-
----
-
-# 🔐 Authentication
-
-The project uses **JWT Bearer Tokens**.
-
-1. Register a user.
-2. Login to obtain an access token.
-3. Click **Authorize** in Swagger.
-4. Enter:
-
 ```
-Bearer <your_access_token>
+GET /api/dashboard
 ```
 
-5. Access protected APIs.
+---
+
+## Notices
+
+```
+GET
+POST
+PUT
+DELETE
+```
 
 ---
 
-# 📊 Database Collections
+# ✨ Future Improvements
 
-- users
-- complaints
-- notices
-
----
-
-# 🧪 Testing
-
-The APIs can be tested using:
-
-- Swagger UI
-- Postman
-- Thunder Client
+- Email notifications
+- SMS alerts
+- Complaint assignment to maintenance staff
+- Real-time notifications
+- Complaint voting
+- Resident discussion forum
+- Payment gateway integration
+- Maintenance scheduling
+- Mobile application
 
 ---
 
-# 👩‍💻 Developer
+# 👩‍💻 Author
 
 **Yogita Chauhan**
 
 B.Tech Computer Science Engineering
 
-Pranveer Singh Institute of Technology (PSIT), Kanpur
+GitHub: https://github.com/yogita1177
+
+LinkedIn: *(Add your LinkedIn URL here)*
 
 ---
 
 # 📄 License
 
-This project is developed for academic and learning purposes.
+This project was developed for educational and learning purposes.
+
+---
