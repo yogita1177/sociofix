@@ -5,6 +5,7 @@ from typing import Optional
 class NoticeCreate(BaseModel):
     title: str
     content: str
+    is_pinned: bool = False
 
 
 class NoticeUpdate(BaseModel):

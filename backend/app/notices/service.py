@@ -9,6 +9,9 @@ class NoticeService:
     def serialize_notice(notice: dict):
 
         notice["_id"] = str(notice["_id"])
+        
+        notice["is_pinned"] = notice.get("is_pinned", False)
+
 
         notice["created_at"] = (
             notice["created_at"].isoformat()
@@ -127,3 +130,21 @@ class NoticeService:
             raise ValueError("Notice not found")
 
         return True
+    
+    @staticmethod
+    def get_pinned_notices():
+
+        notices = get_notices_collection()
+
+        data = list(
+            notices.find(
+            {
+                "is_pinned": True
+            }
+            ).sort("created_at", -1)
+        )
+
+        return [
+            NoticeService.serialize_notice(item)
+            for item in data
+        ]

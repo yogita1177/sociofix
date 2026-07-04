@@ -3,7 +3,9 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-
+from pydantic import BaseModel
+class UpdatePriorityRequest(BaseModel):
+    priority: str
 class ComplaintCreate(BaseModel):
     title: str = Field(..., min_length=5, max_length=100)
     description: str = Field(..., min_length=10)

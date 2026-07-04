@@ -50,6 +50,18 @@ def get_all_notices():
         message="All Notices",
         data=notices,
     )
+    
+@router.get("/pinned")
+def get_pinned_notices():
+
+        notices = NoticeService.get_pinned_notices()
+
+        return success_response(
+            message="Pinned notices fetched successfully",
+            data=notices,
+        )
+    
+    
 
 
 @router.get("/{notice_id}")
