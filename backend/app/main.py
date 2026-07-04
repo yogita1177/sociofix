@@ -13,6 +13,10 @@ from app.complaints.routes import router as complaint_router
 from app.notices.routes import router as notices_router
 from app.dashboard.routes import router as dashboard_router
 
+import os
+
+os.makedirs("uploads", exist_ok=True)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting SocioFix Backend")
@@ -28,9 +32,13 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+from app.core.config import settings
+
+origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.CORS_ORIGINS],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

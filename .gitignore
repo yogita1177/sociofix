@@ -12,7 +12,8 @@ backend/.env
 sociofix-frontend/.env
 
 # Uploads
-backend/uploads/
+uploads/*
+!uploads/.gitkeep
 
 # ===========================
 # Node

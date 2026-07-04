@@ -18,7 +18,10 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
-    CORS_ORIGINS: str = "http://localhost:5173"
+    CORS_ORIGINS: str = (
+        "http://localhost:5173,"
+        "https://sociofix.vercel.app"
+    )
 
     # -----------------------------
     # Email Configuration
